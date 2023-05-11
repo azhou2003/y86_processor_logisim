@@ -1,0 +1,50 @@
+0x000: 30f40002000000000000 |     irmovq $0x200, %rsp     #initializing stack
+0x00a: a05f                 |     pushq %rbp              #save address of stack
+0x00c: 2045                 |     rrmovq %rsp, %rbp       #get current address of stack
+0x00e: 30f06000000000000000 |     irmovq $96, %rax        #space for 12 elements (3 2x2 matrices)
+0x018: 6104                 |     subq %rax, %rsp         #creating space for 12 bytes on stack
+0x01a: 805900000000000000   |     call create_matrix      #calling function to create an array
+0x023: 803401000000000000   |     call matrix_addition    #calling function to perform matrix addition
+0x02c: 30f96500000000000000 |     irmovq $101, %r9        # testing andq
+0x036: 30faa6ffffffffffffff |     irmovq $-90, %r10 
+0x040: 629a                 |     andq %r9, %r10
+0x042: 30fbd200000000000000 |     irmovq $210, %r11       #testing xorq
+0x04c: 30fc47fbffffffffffff |     irmovq $-1209, %r12 
+0x056: 63bc                 |     xorq %r11, %r12
+0x058: 00                   |     halt
+                            | 
+0x059:                      | create_matrix: 
+0x059: 30f06500000000000000 |     irmovq $101, %rax       #creating a 2x2 matrix of values (4x1 array)
+0x063: 4005e0ffffffffffffff |     rmmovq %rax, -32(%rbp)
+0x06d: 30f01700000000000000 |     irmovq $23, %rax
+0x077: 4005d8ffffffffffffff |     rmmovq %rax, -40(%rbp)
+0x081: 30f00700000000000000 |     irmovq $7, %rax
+0x08b: 4005d0ffffffffffffff |     rmmovq %rax, -48(%rbp)
+0x095: 30f04e00000000000000 |     irmovq $78, %rax
+0x09f: 4005c8ffffffffffffff |     rmmovq %rax, -56(%rbp)
+0x0a9: 30f05200000000000000 |     irmovq $82, %rax        #creating a 2x2 matrix of values (4x1 array)
+0x0b3: 4005c0ffffffffffffff |     rmmovq %rax, -64(%rbp)
+0x0bd: 30f04800000000000000 |     irmovq $72, %rax
+0x0c7: 4005b8ffffffffffffff |     rmmovq %rax, -72(%rbp)
+0x0d1: 30f01100000000000000 |     irmovq $17, %rax
+0x0db: 4005b0ffffffffffffff |     rmmovq %rax, -80(%rbp)
+0x0e5: 30f06200000000000000 |     irmovq $98, %rax
+0x0ef: 4005a8ffffffffffffff |     rmmovq %rax, -88(%rbp)
+0x0f9: 2050                 |     rrmovq %rbp, %rax       #pointer to start of array
+0x0fb: 30f31800000000000000 |     irmovq $24, %rbx
+0x105: 6130                 |     subq %rbx, %rax         #last memory address of matrix
+0x107: 90                   |     ret
+                            | 
+0x108:                      | add:
+0x108: 5025c0ffffffffffffff |     mrmovq -64(%rbp), %rdx              #current element a
+0x112: 5065e0ffffffffffffff |     mrmovq -32(%rbp), %rsi              #current element b
+0x11c: 6062                 |     addq %rsi, %rdx #adds to total      #new element for matrix c
+0x11e: 40250000000000000000 |     rmmovq %rdx, (%rbp)                 #stored in matrix c
+0x128: 30f80800000000000000 |     irmovq $8, %r8 #updating address
+0x132: 6185                 |     subq %r8, %rbp
+                            | 
+0x134:                      | matrix_addition:
+0x134: 2008                 |     rrmovq %rax, %r8         #checks to see if loop reaches end
+0x136: 6158                 |     subq %rbp, %r8
+0x138: 710801000000000000   |     jle add
+0x141: 90                   |     ret

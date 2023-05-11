@@ -1,0 +1,85 @@
+                            | # Sorting program using selection sort
+                            | # Array = {5, 4, 2, 6, 3, 7, 1, 8} before sorting
+                            | # Array = {1, 2, 3, 4, 5, 6, 7, 8} after sorting
+                            | # by Sarah Smeltzer
+                            | 
+0x000: 30f40002000000000000 | 	irmovq $0x200, %rsp	# create stack
+0x00a: a05f                 | 	pushq %rbp		# save address of previous stack frame
+0x00c: 2045                 | 	rrmovq %rsp, %rbp	# get current address of current stack frame
+0x00e: 30f04000000000000000 | 	irmovq $64, %rax	# store 48 in register
+0x018: 6104                 | 	subq %rax, %rsp		# to allocate 7 spaces in stack for array
+0x01a: 10                   | 	nop 			# literally just testing if nop works 
+0x01b: 802e00000000000000   | 	call create_array	# call create_array to populate the array
+0x024: 801a01000000000000   | 	call sort		# calls sort to sort the array using Selection sort
+0x02d: 00                   | 	halt			# end program
+                            | 
+0x02e:                      | create_array:
+0x02e: 30f00500000000000000 | 	irmovq $5, %rax		# populating the array of size 8 with values
+0x038: 40050000000000000000 | 	rmmovq %rax, (%rbp)	# %rbp stores start of array address
+0x042: 30f00400000000000000 | 	irmovq $4, %rax		# uses negative numbers because stack grows down
+0x04c: 4005f8ffffffffffffff | 	rmmovq %rax, -8(%rbp)	# in multiples of 8
+0x056: 30f00200000000000000 | 	irmovq $2, %rax
+0x060: 4005f0ffffffffffffff | 	rmmovq %rax, -16(%rbp)
+0x06a: 30f00600000000000000 | 	irmovq $6, %rax
+0x074: 4005e8ffffffffffffff | 	rmmovq %rax, -24(%rbp)
+0x07e: 30f00300000000000000 | 	irmovq $3, %rax
+0x088: 4005e0ffffffffffffff | 	rmmovq %rax, -32(%rbp)
+0x092: 30f00700000000000000 | 	irmovq $7, %rax
+0x09c: 4005d8ffffffffffffff | 	rmmovq %rax, -40(%rbp)
+0x0a6: 30f00100000000000000 | 	irmovq $1, %rax
+0x0b0: 4005d0ffffffffffffff | 	rmmovq %rax, -48(%rbp)
+0x0ba: 30f00800000000000000 | 	irmovq $8, %rax
+0x0c4: 4005c8ffffffffffffff | 	rmmovq %rax, -56(%rbp)
+                            | 
+0x0ce: 2050                 | 	rrmovq %rbp, %rax	# storing starting pointer
+0x0d0: 30f33800000000000000 | 	irmovq $56, %rbx
+0x0da: 6130                 | 	subq %rbx, %rax		# then subtracting 64 from it to get last  mem address of array
+0x0dc: 90                   | 	ret
+                            | 
+                            | 
+0x0dd:                      | loop_sort:	
+0x0dd: 805a01000000000000   | 	call get_min		# gets min, starting from mem address in %rbp to end of array
+0x0e6: 50850000000000000000 | 	mrmovq (%rbp), %r8	# gets curr element and stores it
+0x0f0: 50920000000000000000 | 	mrmovq (%rdx), %r9	# gets min element and stores it
+0x0fa: 40950000000000000000 | 	rmmovq %r9, (%rbp)	# replaces curr element value with min value
+0x104: 40820000000000000000 | 	rmmovq %r8, (%rdx)	# then replaces min value with curr element
+                            | 	
+0x10e: 30f80800000000000000 | 	irmovq $8, %r8		# move 8 to %r8 temporarily
+0x118: 6185                 | 	subq %r8, %rbp		# subtract 8 from curr memory address
+                            | 
+0x11a:                      | sort:
+0x11a: 2008                 | 	rrmovq %rax, %r8	# copies last mem address
+0x11c: 6158                 | 	subq %rbp, %r8		# subtracts current mem address from last mem address
+0x11e: 71dd00000000000000   | 	jle loop_sort		# jumps to loop if the results is <= to 0
+0x127: 90                   | 	ret			# otherwise just returns bc end of array
+                            | 
+                            | 
+                            | 
+0x128:                      | loop_min:
+0x128: 50830000000000000000 | 	mrmovq (%rbx), %r8	# stores element in the current mem address
+0x132: 50920000000000000000 | 	mrmovq (%rdx), %r9	# stores current min value
+0x13c: 6189                 | 	subq %r8, %r9		# subtracts current min value from curr value
+0x13e: 2632                 | 	cmovg %rbx, %rdx	# changes current min address depending on results
+                            | 
+0x140: 30f80800000000000000 | 	irmovq $8, %r8		# moving 8 into %rax
+0x14a: 6183                 | 	subq %r8, %rbx		# to subtract it from the curr memory addres to keep on iterating through the array
+                            | 
+0x14c:                      | check_min:
+0x14c: 2001                 | 	rrmovq %rax, %rcx	# copies last mem address of array		
+0x14e: 6131                 | 	subq %rbx, %rcx		# subtracts current mem address from last mem address of the array
+0x150: 712801000000000000   | 	jle loop_min		# if the results is <= to 0, jump to loop to continue to compare 
+0x159: 90                   | 	ret			# no more elements in array, return
+                            | 	
+0x15a:                      | get_min:
+0x15a: 2053                 | 	rrmovq %rbp, %rbx	# %rbx will store current mem address	
+0x15c: 2032                 | 	rrmovq %rbx, %rdx	# store first element address in array in %rdx which will be used to hold min element address
+                            | 
+0x15e: 30f80800000000000000 | 	irmovq $8, %r8		# moving 8 into %rax
+0x168: 6183                 | 	subq %r8, %rbx		# subtracts 8 from curr mem address bc don't need to compare first element with itself
+0x16a: 804c01000000000000   | 	call check_min		# calls check
+0x173: 90                   | 	ret			# return to main
+                            | 	
+                            | 
+                            | 
+                            | 
+                            | 
