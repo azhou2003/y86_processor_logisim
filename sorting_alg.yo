@@ -1,7 +1,6 @@
                             | # Sorting program using selection sort
                             | # Array = {5, 4, 2, 6, 3, 7, 1, 8} before sorting
                             | # Array = {1, 2, 3, 4, 5, 6, 7, 8} after sorting
-                            | # by Sarah Smeltzer
                             | 
 0x000: 30f40002000000000000 | 	irmovq $0x200, %rsp	# create stack
 0x00a: a05f                 | 	pushq %rbp		# save address of previous stack frame
