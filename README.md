@@ -14,5 +14,3 @@ To load this into the logisim ROM module, simply right click the module and pres
 .mem file.
 
 A few programs have already been created in this repository to test.
-
-remove
